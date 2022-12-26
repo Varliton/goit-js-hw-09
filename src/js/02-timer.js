@@ -40,7 +40,7 @@ function onUpdateTimer(elements, obj) {
     elements[2].firstElementChild.textContent = addLeadingZero(obj.minutes);
     elements[3].firstElementChild.textContent = addLeadingZero(obj.seconds);
     if (Object.values(obj).every(el => el == 0)) {
-      clearInterval(timerRef);
+      clearInterval(timerInterval);
       Notify.success('The countdown is complete');
     }
 }
@@ -73,38 +73,3 @@ function addLeadingZero(value) {
 
 
 
-import { Notify } from 'notiflix';
-
-const formRef = document.querySelector('.form');
-formRef.addEventListener('submit', onBtnSubmit);
-
-function onBtnSubmit(e) {
-  e.preventDefault();
-
-  const formData = new FormData(e.target);
-  const firstDelay = Number(formData.get('delay'));
-  const step = Number(formData.get('step'));
-
-  for (i = 0, i < formData.get('amount'); (i += 1); ) {
-    createPromise(i + 1, firstDelay + i * step)
-      .then(({ position, delay }) => {
-        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-      })
-      .catch(({}) => {
-        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-      });
-  }
-}
-
-function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (shouldResolve) {
-        resolve({ position, delay });
-      } else {
-        reject({ position, delay });
-      }
-    }, delay);
-  });
-}
